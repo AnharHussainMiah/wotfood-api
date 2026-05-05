@@ -29,3 +29,18 @@ Once all the products/items are added to the shopping basket/cart, a "call to ac
 | /api/public/menu-data          | Company Id               | Returns the shops menu data                 |
 | /api/public/item-extra-options | Compnay Id + Item Id     | Returns Items custom optional exta data     |
 | /api/public/handover-basker    | company Id + Basket Data | Returns the session Id for this checkout    |
+
+## Sample Integration
+
+This project includes a sample integration with the `public` API in the folder `wotfood-public-api`, this includes a basic set of unit tests you can run to confirm the APIs are running and what payload response you get.
+
+To run the unit tests, we assume you have `uv` installed (and Python 3):
+
+```shell
+# change into the testing directory
+$ cd wotfood-public-api/
+# make sure to install all the dependencies
+$ uv sync
+# run the tests
+$ uv run pytest -s
+```

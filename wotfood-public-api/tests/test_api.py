@@ -2,9 +2,9 @@ import os
 import json
 import requests
 
-# BASE_URL = os.getenv("BASE_URL", "https://neo.wotfood.co.uk/")
+BASE_URL = os.getenv("BASE_URL", "https://neo.wotfood.co.uk/")
 
-BASE_URL = "http://localhost:9090/"
+# BASE_URL = "http://localhost:9090/"
 
 def println(s):
     print(s+"\n")
@@ -14,7 +14,7 @@ def test_get_shop_details():
     path = "/api/public/shop-details"
 
     payload = {
-        "companyId": 1
+        "companyId": 10
     }
 
     headers = {
@@ -32,7 +32,7 @@ def test_get_opening_times():
     path = "/api/public/opening-times"
 
     payload = {
-        "companyId": 1
+        "companyId": 10
     }
 
     headers = {
@@ -49,7 +49,7 @@ def test_get_menu_data():
     path = "/api/public/menu-data"
 
     payload = {
-        "companyId": 1
+        "companyId": 10
     }
 
     headers = {
