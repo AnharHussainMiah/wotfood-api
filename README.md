@@ -28,11 +28,11 @@ Once all the products/items are added to the shopping basket/cart, a "call to ac
 | /api/public/opening-times      | Company Id               | Returns the shops opening and closing times |
 | /api/public/menu-data          | Company Id               | Returns the shops menu data                 |
 | /api/public/item-extra-options | Compnay Id + Item Id     | Returns Items custom optional exta data     |
-| /api/public/handover-basker    | company Id + Basket Data | Returns the session Id for this checkout    |
+| /api/public/handover-basket    | company Id + Basket Data | Returns the session Id for this checkout    |
 
-## Sample Integration
+## Sample Tests
 
-This project includes a sample integration with the `public` API in the folder `wotfood-public-api`, this includes a basic set of unit tests you can run to confirm the APIs are running and what payload response you get.
+This project includes a sample integration with the `public` API in the folder `wotfood-public-api`, this includes a basic set of unit tests you can run to confirm the APIs are running and what payload response you can expect to get.
 
 To run the unit tests, we assume you have `uv` installed (and Python 3):
 
@@ -44,3 +44,7 @@ $ uv sync
 # run the tests
 $ uv run pytest -s
 ```
+
+## Fully integrated Web App Sample
+
+We have included a sample website that fully integrates all the Public API, this can be found in the folder `sample-web`, this is a clean implementation written using the Vue Framework. You can potentially use this as a starting point. This code fully demonstrates how to implement the handover API, as well as handle options and rendering baskets etc.
