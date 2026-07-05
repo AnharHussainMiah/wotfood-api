@@ -14,6 +14,8 @@
 
     </span>
 
+    <h2>TOTAL:  £{{  computeTotal() }}</h2>
+
 </template>
 
 <script>
@@ -54,11 +56,10 @@ export default {
 
         renderOptionData(itemId, optionId) {
             const options = this.basket.optionCache.get(itemId);
-
             const option = options.filter(x => x.id == optionId);
 
             if(option.length > 0) {
-                return `........(${option[0].title}) ${option[0].name} £${option[0].price}`
+                return `....... (${option[0].title}) ${option[0].name} £${option[0].price}`
             }
 
             return `${itemId} | ${optionId}`
@@ -85,6 +86,30 @@ export default {
 
             // console.log(grouped);
             return grouped.sort();
+        },
+
+        computeTotal() {
+            const total = this.groupItems(this.basket.items).reduce((sum, x) => {
+                return sum + (x.price * x.quantity);
+                // if(x.options) {
+                //     return sum + (x.price + (this.computeItemOptionTotal(x)) * x.quantity);
+                // } else {
+                //     return sum + (x.price * x.quantity);
+                // }
+            }, 0);
+            return total;
+        },
+
+        computeItemOptionTotal(item) {
+            const options = this.basket.optionCache.get(item.id);
+
+            const idToPrice = new Map(options.map(x => [x.id, x]));
+
+            const subtotal = item.options.reduce((sum, id) => {
+                return sum + (idToPrice.get(id)?.price ?? 0);
+            }, 0);
+
+            return subtotal;
         }
     }
 }

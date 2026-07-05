@@ -119,7 +119,6 @@ export default {
                 // console.log("Success:", result);
                 this.menuData = result;
                 this.categories = [...new Set(result.map(item => item.category))];
-                console.log(this.categories);
             } catch (error) {
                 console.error("Unable to complete request:", error.message);
             }
