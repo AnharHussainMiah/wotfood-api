@@ -16,9 +16,12 @@
 
     <h2>TOTAL:  £{{  computeTotal() }}</h2>
 
+    <button @click="btnCheckout">Check Out on wotFood</button>
+
 </template>
 
 <script>
+import config from '../config';
 import { basket } from '../store'
 
 export default {
@@ -90,7 +93,6 @@ export default {
 
         computeTotal() {
             const total = this.groupItems(this.basket.items).reduce((sum, x) => {
-                return sum + (x.price * x.quantity);
                 if(x.options) {
                     return sum + (x.price + (this.computeItemOptionTotal(x)) * x.quantity);
                 } else {
@@ -110,6 +112,95 @@ export default {
             }, 0);
 
             return subtotal;
+        },
+
+        btnCheckout() {
+            /* -------------------------------------------------------------------------------------
+            Here we use the "handover api", we have to craft the correct payload, and in theory if
+            all the server side checks pass, it should return as a unique session that we can then
+            redirect to for the customer to complete the sale.
+
+            If the customer hits the back button, they will lose the basket, allthough we may have
+            to potentially think about a way to persist the basket perhaps?
+
+            Schema:
+
+            PublicBasket {
+                companyId: 1,
+                
+                basket: [
+                    {
+                        productId: 1,
+                        quantity: 2,
+                        options: []
+                    },
+                    {
+                        productId: 2,
+                        quantity: 1,
+                        options: [
+                            {
+                                groupName: "Size",
+                                id: 2
+                            },
+                            {
+                                groupName: "Toppings",
+                                id: 4
+                            }
+                        ]
+                    }
+                ],
+
+                sessionId: null
+            }
+
+
+            redirection to: /basket?sessionId=xxx
+
+            ------------------------------------------------------------------------------------- */
+            const PublicBasket = {
+                companyId: config.COMPANY_ID,
+                basket: this.groupItems(this.basket.items).map(x => ({
+                        productId: x.id, 
+                        quantity: x.quantity,
+                        options: x.options && x.options.length > 0 ? this.injectOptionTitle(x.options, x.id) : []
+                    })
+                ),
+                sessionId: null
+            };
+
+            console.log(PublicBasket);
+
+            alert("todo")
+        },
+
+        injectOptionTitle(options, itemId) {
+            /*
+            when we have options [1, 2, 3]
+            
+            we want to return 
+            
+            [
+                {
+                    groupName: "Size", // groupName is actually the title
+                    id: 1
+                },
+                ... (and so forth)
+            ]
+
+            */
+        
+            const optionsCache = this.basket.optionCache.get(itemId);            
+    
+            const optionMap = new Map(optionsCache.map(x => [x.id, x]));
+
+            const result = options.map(id => {
+                const option = optionMap.get(id);
+                return option
+                    ? { groupName: option.title, id: option.id }
+                    : null;
+            }).filter(Boolean);
+            
+            return result;
         }
     }
 }
