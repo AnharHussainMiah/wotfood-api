@@ -48,21 +48,27 @@
                     {{ option.name }} £{{ option.price }}<br/>
                 </div>
                 <div v-else>
-                    pick many:
-                    {{ option.name }} £{{ option.price }}<br/>
+                    <input 
+                        type="checkbox" 
+                        :id="option.id" 
+                        :value="option.id"
+                        @change="setManyPicked($event, option.id)"
+                    >
+                    <label :for="option.id">{{ option.name }} £{{ option.price }}</label><br>
+                    
                 </div>
             </div>
         </div>
     
 
+        <h3 style="color:red" v-if="optionError !== ''">{{ optionError }}</h3>
+
         <button @click="btnCancelOption">CANCEL</button>
+        <button @click="btnOptionAdd">ADD</button>
     </div>
 </template>
 
 <script>
-
-// :checked="selected[group.groupId] === item.id"
-// @change="select(group.groupId, item.id)"
 
 import config from '../config';
 import { postJson } from '../api';
@@ -77,9 +83,10 @@ export default {
             categories: {},
             basket: basket,
             showOptions: false,
-            optionData: null,
-            optionPicked: [],
-            optionItem: {}
+            optionData: null, // option data as loaded in from the database
+            optionPicked: [], // the options the user has picked
+            optionItem: {},   // the current item that was clicked (parent)
+            optionError: ''
         }
     },
     mounted () {
@@ -121,10 +128,11 @@ export default {
         async loadOptionData(productId) {
             try {
                 const result = await postJson(`${config.BASE_URL}/api/public/item-extra-options`, {productId: productId});
-                console.log("Success:", result);
-                console.log(result);
+                // console.log("Success:", result);
+                // console.log(result);
                 this.optionData = result;
                 this.showOptions = true;
+                basket.optionCache.set(productId, result);
             } catch (error) {
                 console.error("Unable to complete request:", error.message);
             }
@@ -138,6 +146,53 @@ export default {
             this.optionPicked.push(id);
 
             console.log(`pciked ${title} | ${id}`)
+        },
+
+        setManyPicked(event, id) {
+            if(event.target.checked) {
+                console.log(`checkbox ID ${id} picked!`)
+                this.optionPicked.push(id);
+            } else {
+                console.log(`checkbox ID ${id} unpicked!`)
+                this.optionPicked = this.optionPicked.filter( x => x !== id);
+            }
+        },
+
+        btnOptionAdd() {
+            this.optionError = "";
+            /* -------------------------------------------------------------------------------------
+            For each of the option sub groups, for the "pick one" we have to make sure one and only
+            one id has been picked. For the "pick many" we have to make sure at least one ID has
+            been picked.
+            ------------------------------------------------------------------------------------- */
+            const titles = [... new Set(this.optionData.map( x => x.title))];
+
+            for(const title of titles) {
+                console.log(`Validating (${title})`);
+                const options = this.optionData.filter(x => x.title == title);
+                
+                if(options.length > 0 && options[0].option_kind == 'pick-one') {
+                    if(this.optionPicked.filter(x => options.map(y => y.id).includes(x)).length !== 1) {
+                        this.optionError = `You have to pick one option from "${title}"`;
+                        return
+                    }
+                }
+
+                if(options.length > 0 && options[0].option_kind == 'pick-many') {
+                    if(this.optionPicked.filter(x => options.map(y => y.id).includes(x)).length < 1) {
+                        this.optionError = `You have to pick at least one option from "${title}"`;
+                        return
+                    }
+                }
+            }
+
+            // all the option(s) are selected we can add this to the basket now
+
+            this.basket.items.push({
+                ...this.optionItem,
+                options: this.optionPicked
+            })
+            this.showOptions = false;
         },
 
         isIdSelected(id) {
@@ -163,6 +218,7 @@ export default {
                 this.optionItem = item;
                 this.optionPicked = [];
                 this.optionData = null;
+                this.optionError = '';
 
                 this.loadOptionData(item.id);
 

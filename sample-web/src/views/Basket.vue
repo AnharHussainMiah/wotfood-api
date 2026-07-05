@@ -5,6 +5,11 @@
 
     <span v-for="item in groupItems(basket.items)">
         {{ item.quantity }}x <b>{{ item.name }}</b> (£{{ item.price }}) <button @click="btnMinus(item)">MINUS</button><button @click="btnAdd(item)">ADD</button> <button @click="btnDelete(item)">DEL</button>
+        <div v-if="item.options && item.options.length > 0">
+            <span v-for="id in item.options">
+                {{ renderOptionData(item.id, id) }}<br/>
+            </span>
+        </div>
         <br/>
 
     </span>
@@ -45,6 +50,18 @@ export default {
                 [...new Set(item.options ?? [])].sort((a, b) => a - b)
             )}`;
             return key;
+        },
+
+        renderOptionData(itemId, optionId) {
+            const options = this.basket.optionCache.get(itemId);
+
+            const option = options.filter(x => x.id == optionId);
+
+            if(option.length > 0) {
+                return `........(${option[0].title}) ${option[0].name} £${option[0].price}`
+            }
+
+            return `${itemId} | ${optionId}`
         },
 
         groupItems(items) {

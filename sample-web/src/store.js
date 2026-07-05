@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 
 export const basket = reactive({
-    items: []
+    items: [],
+    optionCache: new Map()
 })
