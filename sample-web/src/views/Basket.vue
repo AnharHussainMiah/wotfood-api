@@ -91,11 +91,11 @@ export default {
         computeTotal() {
             const total = this.groupItems(this.basket.items).reduce((sum, x) => {
                 return sum + (x.price * x.quantity);
-                // if(x.options) {
-                //     return sum + (x.price + (this.computeItemOptionTotal(x)) * x.quantity);
-                // } else {
-                //     return sum + (x.price * x.quantity);
-                // }
+                if(x.options) {
+                    return sum + (x.price + (this.computeItemOptionTotal(x)) * x.quantity);
+                } else {
+                    return sum + (x.price * x.quantity);
+                }
             }, 0);
             return total;
         },
