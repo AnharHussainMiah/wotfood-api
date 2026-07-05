@@ -23,6 +23,7 @@
 <script>
 import config from '../config';
 import { basket } from '../store'
+import { postJson } from '../api';
 
 export default {
     data() {
@@ -168,9 +169,19 @@ export default {
                 sessionId: null
             };
 
-            console.log(PublicBasket);
+            this.submitBasket(PublicBasket);
+        },
 
-            alert("todo")
+        async submitBasket(basket) {
+            try {
+                const result = await postJson(`${config.BASE_URL}/api/public/handover-basket`, basket);
+                console.log("Success:", result);
+                
+                // if we have the sessionId, built the url and redirect here
+
+            } catch (error) {
+                console.error("Unable to complete request:", error.message);
+            }
         },
 
         injectOptionTitle(options, itemId) {
@@ -190,7 +201,7 @@ export default {
             */
         
             const optionsCache = this.basket.optionCache.get(itemId);            
-    
+            
             const optionMap = new Map(optionsCache.map(x => [x.id, x]));
 
             const result = options.map(id => {
