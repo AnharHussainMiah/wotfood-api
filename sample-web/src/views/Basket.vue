@@ -155,7 +155,7 @@ export default {
             }
 
 
-            redirection to: /basket?sessionId=xxx
+            redirection to: /checkout?sessionId=xxx
 
             ------------------------------------------------------------------------------------- */
             const PublicBasket = {
@@ -178,6 +178,7 @@ export default {
                 console.log("Success:", result);
                 
                 // if we have the sessionId, built the url and redirect here
+                window.location.replace(`${config.BASE_URL}/checkout?sessionId=${result}`);
 
             } catch (error) {
                 console.error("Unable to complete request:", error.message);
