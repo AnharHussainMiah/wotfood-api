@@ -48,3 +48,6 @@ $ uv run pytest -s
 ## Fully integrated Web App Sample
 
 We have included a sample website that fully integrates all the Public API, this can be found in the folder `sample-web`, this is a clean implementation written using the Vue Framework. You can potentially use this as a starting point. This code fully demonstrates how to implement the handover API, as well as handle options and rendering baskets etc.
+
+To test out and see how the "optional" and variations is implemented, in the sample you can use the product "Chingri Sizzler" under the "Non Veg Appetisers" category.
+
